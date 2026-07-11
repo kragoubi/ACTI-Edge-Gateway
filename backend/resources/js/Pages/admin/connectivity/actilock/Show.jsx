@@ -102,6 +102,20 @@ export default function ActilockShow() {
                     </Card>
                 </div>
 
+                {/* Workstation Configs link */}
+                <a href={`/admin/connectivity/actilock/${connection.id}/workstation-configs`}
+                    className="block bg-om-card rounded-om border border-om-line2 p-5 mb-6 hover:border-om-accent transition-colors">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="text-sm font-semibold text-om-muted uppercase tracking-wider">Per-Workstation Configs</h3>
+                            <p className="text-xs text-om-faint mt-1">
+                                Map PLC IPs to resource, operation and user for this connection.
+                            </p>
+                        </div>
+                        <span className="text-om-accent text-sm">Manage &rarr;</span>
+                    </div>
+                </a>
+
                 {/* Launch command hint */}
                 <div className="bg-om-card rounded-om border border-om-line2 p-5 mb-6">
                     <h3 className="text-sm font-semibold text-om-muted uppercase tracking-wider mb-3">Python Bridge (Recommended)</h3>

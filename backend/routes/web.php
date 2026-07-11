@@ -734,6 +734,19 @@ Route::middleware('auth')->group(function () {
             ->parameters(['actilock' => 'machineConnection'])
             ->names('connectivity.actilock');
 
+        // Per-workstation ACTILOCK configs (nested under connection)
+        Route::prefix('connectivity/actilock/{machineConnection}/workstation-configs')
+            ->name('connectivity.actilock.workstation-config.')
+            ->group(function () {
+                $c = \App\Http\Controllers\Web\Admin\Connectivity\WorkstationActilockConfigController::class;
+                Route::get('/', [$c, 'index'])->name('index');
+                Route::get('/create', [$c, 'create'])->name('create');
+                Route::post('/', [$c, 'store'])->name('store');
+                Route::get('/{config}/edit', [$c, 'edit'])->name('edit');
+                Route::put('/{config}', [$c, 'update'])->name('update');
+                Route::delete('/{config}', [$c, 'destroy'])->name('destroy');
+            });
+
         // Live machine monitor (React/Inertia — ported from the original develop Blade UI)
         Route::get('/machine-monitor', [\App\Http\Controllers\Web\Admin\MachineMonitorController::class, 'index'])->name('machine-monitor.index');
         Route::get('/machine-monitor/check', [\App\Http\Controllers\Web\Admin\MachineMonitorController::class, 'check'])->name('machine-monitor.check');
