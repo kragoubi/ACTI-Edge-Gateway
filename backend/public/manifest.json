@@ -1,7 +1,7 @@
 {
-    "name": "OpenMES",
-    "short_name": "OpenMES",
-    "description": "Manufacturing Execution System",
+    "name": "ACTI Edge Gateway (AEG)",
+    "short_name": "AEG",
+    "description": "ACTI Edge Gateway — Industrial Communication Bridge",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#111827",

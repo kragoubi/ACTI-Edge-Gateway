@@ -729,6 +729,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/connectivity/opcua/{machineConnection}/tags', [\App\Http\Controllers\Web\Admin\Connectivity\OpcuaConnectionController::class, 'storeTag'])->name('connectivity.opcua.tags.store');
         Route::delete('/connectivity/opcua/{machineConnection}/tags/{tag}', [\App\Http\Controllers\Web\Admin\Connectivity\OpcuaConnectionController::class, 'destroyTag'])->name('connectivity.opcua.tags.destroy');
 
+        // ACTILOCK interlock connections
+        Route::resource('connectivity/actilock', \App\Http\Controllers\Web\Admin\Connectivity\ActilockConnectionController::class)
+            ->parameters(['actilock' => 'machineConnection'])
+            ->names('connectivity.actilock');
+
         // Live machine monitor (React/Inertia — ported from the original develop Blade UI)
         Route::get('/machine-monitor', [\App\Http\Controllers\Web\Admin\MachineMonitorController::class, 'index'])->name('machine-monitor.index');
         Route::get('/machine-monitor/check', [\App\Http\Controllers\Web\Admin\MachineMonitorController::class, 'check'])->name('machine-monitor.check');

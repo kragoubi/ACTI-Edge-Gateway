@@ -171,6 +171,7 @@ export const ADMIN_GROUPS = [
             { label: 'MQTT', href: '/admin/connectivity/mqtt', match: ['/admin/connectivity/mqtt'] },
             { label: 'Modbus', href: '/admin/connectivity/modbus', match: ['/admin/connectivity/modbus'] },
             { label: 'OPC UA', href: '/admin/connectivity/opcua', match: ['/admin/connectivity/opcua'] },
+            { label: 'ACTILOCK', href: '/admin/connectivity/actilock', match: ['/admin/connectivity/actilock'] },
             { label: 'Machine Monitor', href: '/admin/machine-monitor', match: ['/admin/machine-monitor'] },
         ],
     },

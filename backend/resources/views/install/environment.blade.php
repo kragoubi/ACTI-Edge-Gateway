@@ -4,14 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Setup - Install OpenMES</title>
+    <title>Setup - Install ACTI Edge Gateway (AEG)</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-2xl">
         <div class="text-center mb-8">
-            <img src="/logo_open_mes.png" alt="OpenMES" class="h-16 md:h-20 mx-auto mb-2">
-            <h1 class="text-2xl font-bold text-gray-800">Welcome to OpenMES!</h1>
+            <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" class="h-16 md:h-20 mx-auto mb-2">
+            <h1 class="text-2xl font-bold text-gray-800">Welcome to ACTI Edge Gateway (AEG)!</h1>
             <p class="text-gray-600 mt-2">Step 1 of 3: Basic Configuration</p>
         </div>
 
@@ -37,7 +37,7 @@
                         type="text"
                         id="app_name"
                         name="app_name"
-                        value="{{ old('app_name', 'OpenMES') }}"
+                        value="{{ old('app_name', 'ACTI Edge Gateway (AEG)') }}"
                         class="form-input w-full"
                         required
                     >
@@ -54,7 +54,7 @@
                         class="form-input w-full"
                         required
                     >
-                    <p class="text-sm text-gray-500 mt-1">The URL where OpenMES will be accessed</p>
+                    <p class="text-sm text-gray-500 mt-1">The URL where ACTI Edge Gateway will be accessed</p>
                 </div>
 
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">

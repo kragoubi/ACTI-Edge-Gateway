@@ -1,0 +1,34 @@
+[Unit]
+Description=ACTI Edge Gateway — Interlock Bridge
+Documentation=https://github.com/kragoubi/ACTI-Edge-Gateway
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=aeg
+Group=aeg
+WorkingDirectory=/opt/aeg/python
+ExecStart=/usr/bin/python3 /opt/aeg/python/interlock_bridge.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=aeg-interlock
+
+# Environment
+EnvironmentFile=/opt/aeg/.env.interlock
+
+# Security
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/log/aeg
+PrivateTmp=yes
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

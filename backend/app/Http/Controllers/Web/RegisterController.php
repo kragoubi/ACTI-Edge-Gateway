@@ -59,7 +59,7 @@ class RegisterController extends Controller
         $request->session()->regenerate();
 
         return redirect()->route('operator.select-line')
-            ->with('success', 'Account created successfully. Welcome to OpenMES!');
+            ->with('success', 'Account created successfully. Welcome to ACTI Edge Gateway (AEG)!');
     }
 
     private function registrationEnabled(): bool

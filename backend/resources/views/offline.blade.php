@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Offline — OpenMES</title>
+    <title>Offline — ACTI Edge Gateway (AEG)</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#1e40af">
     @vite(['resources/css/app.css'])
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
     <div class="text-center max-w-sm">
-        <img src="/logo_open_mes.png" alt="OpenMES" class="h-14 mx-auto mb-8 opacity-60">
+        <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" class="h-14 mx-auto mb-8 opacity-60">
         <div class="bg-white rounded-xl shadow-md p-8">
             <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"

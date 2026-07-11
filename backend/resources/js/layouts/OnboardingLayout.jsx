@@ -22,11 +22,11 @@ export default function OnboardingLayout({ children }) {
 
     return (
         <div className="bg-om-bg min-h-screen flex flex-col items-center justify-center p-4 font-sans">
-            <Head title="OpenMES — Setup Wizard" />
+            <Head title="ACTI Edge Gateway (AEG) — Setup Wizard" />
             <div className="w-full max-w-2xl">
                 {/* Logo */}
                 <div className="text-center mb-8">
-                    <img src="/logo_open_mes.png" alt="OpenMES" className="h-9 w-auto mx-auto mb-3" />
+                    <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" className="h-9 w-auto mx-auto mb-3" />
                     <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-om-faint">{__('Setup Wizard')}</p>
                 </div>
 

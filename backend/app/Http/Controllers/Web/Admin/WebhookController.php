@@ -103,7 +103,7 @@ class WebhookController extends Controller
             'event_type' => 'webhook.test',
             'payload' => [
                 'event' => 'webhook.test',
-                'data' => ['message' => 'This is a test delivery from OpenMES.'],
+                'data' => ['message' => 'This is a test delivery from ACTI Edge Gateway (AEG).'],
                 'timestamp' => now()->toIso8601String(),
             ],
             'status' => WebhookDelivery::STATUS_PENDING,

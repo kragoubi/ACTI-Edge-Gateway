@@ -122,7 +122,7 @@ function GalleryBody() {
                 <div className="mb-2 flex items-end justify-between gap-6">
                     <div>
                         <div className="mb-4 flex items-center gap-2.5">
-                            <img src="/logo_open_mes.png" alt="OpenMES" className="h-6 w-auto" />
+                            <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" className="h-6 w-auto" />
                             <span className="rounded-[5px] border border-om-line px-[7px] py-0.5 font-mono text-[9.5px] text-om-faint">design system</span>
                         </div>
                         <h1 className="text-[32px] font-semibold tracking-[-0.025em] text-om-ink">Component gallery</h1>

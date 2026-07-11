@@ -311,7 +311,7 @@ class InstallController extends Controller
         }
 
         $adminConfig = session('install_admin_config', [
-            'site_name' => 'OpenMES',
+            'site_name' => 'ACTI Edge Gateway (AEG)',
             'site_url' => 'http://localhost',
             'admin_username' => '',
             'admin_email' => '',

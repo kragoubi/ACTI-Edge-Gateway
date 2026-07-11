@@ -98,7 +98,7 @@ export default function AppLayout({ children }) {
                         <Icon d="M4 6h16M4 12h16M4 18h16" className="w-6 h-6" />
                     </button>
                     <span className="flex items-center gap-2.5">
-                        <img src="/logo_open_mes.png" alt="OpenMES" className="h-8 w-auto" />
+                        <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" className="h-8 w-auto" />
                     </span>
                 </header>
 
@@ -241,7 +241,7 @@ function Sidebar({
                 <Link href="/admin/dashboard" className="flex items-center gap-2 min-w-0 overflow-hidden">
                     {showLabels ? (
                         <>
-                            <img src="/logo_open_mes.png" alt="OpenMES" className="h-9 w-auto shrink-0" />
+                            <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" className="h-9 w-auto shrink-0" />
                             {appVersion && (
                                 <span className="shrink-0 rounded border border-om-line px-[5px] py-px font-mono text-[9px] text-om-faint">
                                     {appVersion}
@@ -250,7 +250,7 @@ function Sidebar({
                         </>
                     ) : (
                         <span className="block size-9 shrink-0 overflow-hidden">
-                            <img src="/logo_open_mes.png" alt="OpenMES" className="h-9 max-w-none" />
+                            <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" className="h-9 max-w-none" />
                         </span>
                     )}
                 </Link>

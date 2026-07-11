@@ -9,7 +9,7 @@ export default function ModulesStore() {
             <div className="max-w-3xl mx-auto">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-om-ink">{__('Module Store')}</h1>
-                    <p className="text-om-muted mt-1">{__('Browse and install ready-made OpenMES modules')}</p>
+                    <p className="text-om-muted mt-1">{__('Browse and install ready-made AEG modules')}</p>
                 </div>
 
                 <div className="card text-center py-20">
@@ -21,7 +21,7 @@ export default function ModulesStore() {
                     </div>
                     <h2 className="text-2xl font-bold text-om-muted mb-2">{__('Coming Soon')}</h2>
                     <p className="text-om-muted text-sm max-w-md mx-auto mb-6">
-                        {__('The module store is being prepared. Soon you will be able to browse, purchase and install certified OpenMES extensions with a single click.')}
+                        {__('The module store is being prepared. Soon you will be able to browse, purchase and install certified AEG extensions with a single click.')}
                     </p>
                     <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-om-downtime-bg text-om-downtime border border-om-line">
                         <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

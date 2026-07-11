@@ -19,8 +19,8 @@ export default function AuthLayout({ children }) {
             <div className="w-full max-w-md">
                 {/* Logo / Header — real brand mark, matching the authenticated app shell */}
                 <div className="text-center mb-8">
-                    <img src="/logo_open_mes.png" alt="OpenMES" className="h-9 w-auto mx-auto mb-3" />
-                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-om-faint">Manufacturing Execution System</p>
+                    <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" className="h-9 w-auto mx-auto mb-3" />
+                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-om-faint">Industrial Communication Bridge</p>
                 </div>
 
                 {/* Auth Card */}

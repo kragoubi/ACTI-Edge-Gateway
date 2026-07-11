@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Installation Complete - OpenMES</title>
+    <title>Installation Complete - ACTI Edge Gateway (AEG)</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
@@ -14,7 +14,7 @@
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
             </div>
-            <img src="/logo_open_mes.png" alt="OpenMES" class="h-20 md:h-24 mx-auto mb-4">
+            <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" class="h-20 md:h-24 mx-auto mb-4">
             <h1 class="text-4xl font-bold text-gray-800 mb-2">Installation Complete!</h1>
             <p class="text-xl text-gray-600">System is ready to use 🎉</p>
         </div>

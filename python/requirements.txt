@@ -1,0 +1,14 @@
+# ACTI Edge Gateway — Interlock Bridge
+# Python dependencies (stdlib only — no pip packages required)
+#
+# The bridge uses only Python standard library modules:
+# - ctypes (FFI to lib_actilock.so)
+# - socket (TCP server)
+# - multiprocessing (process isolation)
+# - threading (concurrent PLC handlers)
+# - json (API communication)
+# - logging (structured logging)
+# - signal (graceful shutdown)
+# - urllib (HTTP client for Laravel API)
+#
+# No third-party packages needed.

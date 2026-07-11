@@ -28,7 +28,7 @@ export default function ModulesIndex() {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                     <div>
                         <h1 className="text-[26px] font-semibold tracking-[-0.02em] text-om-ink">{__('Installed Modules')}</h1>
-                        <p className="text-om-muted text-sm mt-0.5">{__('Enable and disable installed OpenMES extensions')}</p>
+                        <p className="text-om-muted text-sm mt-0.5">{__('Enable and disable installed AEG extensions')}</p>
                     </div>
                     <Link href="/admin/modules/install">
                         <Button variant="primary">{__('+ Install Module')}</Button>

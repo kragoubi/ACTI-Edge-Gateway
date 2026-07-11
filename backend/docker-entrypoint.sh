@@ -13,7 +13,7 @@ esac
 
 # ── .env ────────────────────────────────────────────────────────────────────
 if [ ! -f .env ]; then
-    echo "[OpenMES] Creating .env from .env.example..."
+    echo "[AEG] Creating .env from .env.example..."
     cp .env.example .env
 fi
 
@@ -33,14 +33,14 @@ for VAR in APP_ENV APP_DEBUG APP_URL QUEUE_CONNECTION DB_CONNECTION DB_HOST DB_P
 done
 
 if ! grep -q "APP_KEY=base64:" .env; then
-    echo "[OpenMES] Generating APP_KEY..."
+    echo "[AEG] Generating APP_KEY..."
     NEW_KEY="base64:$(php -r 'echo base64_encode(random_bytes(32));')"
     if grep -q "^APP_KEY=" .env; then
         sed -i "s|^APP_KEY=.*|APP_KEY=$NEW_KEY|" .env
     else
         echo "APP_KEY=$NEW_KEY" >> .env
     fi
-    echo "[OpenMES] APP_KEY set successfully."
+    echo "[AEG] APP_KEY set successfully."
 fi
 
 # ── Clear stale bootstrap cache ─────────────────────────────────────────────
@@ -55,11 +55,11 @@ php artisan package:discover --ansi 2>/dev/null || true
 
 if [ "$IS_PRIMARY" = "1" ]; then
     # ── Migrations ───────────────────────────────────────────────────────────
-    echo "[OpenMES] Running migrations..."
+    echo "[AEG] Running migrations..."
     php artisan migrate --force
 
     # ── Seeders (idempotent) ─────────────────────────────────────────────────
-    echo "[OpenMES] Running seeders..."
+    echo "[AEG] Running seeders..."
     php artisan db:seed --class=RolesAndPermissionsSeeder --force
     php artisan db:seed --class=IssueTypesSeeder --force
     php artisan db:seed --class=LineStatusSeeder --force
@@ -82,7 +82,7 @@ if [ "$IS_PRIMARY" = "1" ]; then
     USER_COUNT=$(php artisan tinker --execute="echo \App\Models\User::count();" 2>/dev/null | tail -n1 | tr -d '[:space:]')
 
     if [ "$USER_COUNT" = "0" ]; then
-        echo "[OpenMES] Creating admin account (username: ${ADMIN_USERNAME})..."
+        echo "[AEG] Creating admin account (username: ${ADMIN_USERNAME})..."
         php artisan tinker --execute="
             \$u = \App\Models\User::create([
                 'name'                  => 'Administrator',
@@ -96,7 +96,7 @@ if [ "$IS_PRIMARY" = "1" ]; then
         "
         echo ""
         echo "╔══════════════════════════════════════════╗"
-        echo "║            OpenMES — admin               ║"
+        echo "║            ACTI Edge Gateway (AEG)       ║"
         echo "║                                          ║"
         echo "║  URL:      ${APP_URL:-http://localhost}"
         echo "║  Login:    ${ADMIN_USERNAME}"
@@ -105,16 +105,16 @@ if [ "$IS_PRIMARY" = "1" ]; then
         echo "╚══════════════════════════════════════════╝"
         echo ""
     else
-        echo "[OpenMES] Admin already exists, skipping default user creation."
+        echo "[AEG] Admin already exists, skipping default user creation."
     fi
 
     # ── Mark as installed (skip web installer) ───────────────────────────────
     if [ ! -f storage/installed ]; then
-        echo "[OpenMES] Marking application as installed..."
+        echo "[AEG] Marking application as installed..."
         date '+%Y-%m-%d %H:%M:%S' > storage/installed
     fi
 else
-    echo "[OpenMES] Sidecar container ($*) — skipping migrations/seeders (handled by the primary)."
+    echo "[AEG] Sidecar container ($*) — skipping migrations/seeders (handled by the primary)."
 fi
 
 # ── Cache ────────────────────────────────────────────────────────────────────
@@ -122,7 +122,7 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-echo "[OpenMES] Ready at http://localhost:8080"
+echo "[AEG] Ready at http://localhost:8080"
 
 # ── Scheduler (runs every 60s in background) ─────────────────────────────────
 # Only on the primary, so sidecars don't each spawn a competing scheduler.

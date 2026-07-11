@@ -12,12 +12,20 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
+
         DB::statement('ALTER TABLE machine_connections DROP CONSTRAINT machine_connections_protocol_check');
         DB::statement("ALTER TABLE machine_connections ADD CONSTRAINT machine_connections_protocol_check CHECK (((protocol)::text = ANY ((ARRAY['mqtt'::character varying, 'opcua'::character varying, 'modbus'::character varying, 'rest'::character varying, 'actilock'::character varying])::text[])))");
     }
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
+
         DB::statement('ALTER TABLE machine_connections DROP CONSTRAINT machine_connections_protocol_check');
         DB::statement("ALTER TABLE machine_connections ADD CONSTRAINT machine_connections_protocol_check CHECK (((protocol)::text = ANY ((ARRAY['mqtt'::character varying, 'opcua'::character varying, 'modbus'::character varying, 'rest'::character varying])::text[])))");
     }

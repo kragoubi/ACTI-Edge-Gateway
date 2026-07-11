@@ -21,14 +21,14 @@ return [
 
     'info' => [
         'version' => env('API_VERSION', '1.0.0'),
-        'description' => 'OpenMES API documentation. Sign in via Sanctum (POST /api/login) and use the returned bearer token to authorise requests.',
+        'description' => 'ACTI Edge Gateway (AEG) API documentation. Sign in via Sanctum (POST /api/login) and use the returned bearer token to authorise requests.',
     ],
 
     /*
      * UI tweaks.
      */
     'ui' => [
-        'title' => 'OpenMES API',
+        'title' => 'ACTI Edge Gateway API',
         'theme' => 'light',
         'hide_try_it' => false,
         'hide_schemas' => false,

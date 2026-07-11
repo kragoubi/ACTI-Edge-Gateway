@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "mes-open/openmes",
     "type": "project",
-    "description": "OpenMES — open-source Manufacturing Execution System.",
+    "description": "ACTI Edge Gateway (AEG) — Industrial Communication Bridge.",
     "keywords": [
         "openmes",
         "mes",

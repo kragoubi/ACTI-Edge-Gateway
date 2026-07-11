@@ -48,7 +48,7 @@ class TwoFactorController extends Controller
         }
 
         $qrCodeUrl = $this->google2fa->getQRCodeUrl(
-            'OpenMES',
+            'ACTI Edge Gateway (AEG)',
             $user->username,
             $secret
         );

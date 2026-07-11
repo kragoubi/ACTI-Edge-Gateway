@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title inertia>{{ config('app.name', 'OpenMES') }}</title>
+    <title inertia>{{ config('app.name', 'ACTI Edge Gateway (AEG)') }}</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
     {{-- Geist + Geist Mono — the design-system typefaces (see packages/ui tokens) --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">

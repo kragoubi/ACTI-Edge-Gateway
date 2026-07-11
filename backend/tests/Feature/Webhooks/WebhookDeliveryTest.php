@@ -125,9 +125,9 @@ class WebhookDeliveryTest extends TestCase
         Http::assertSent(function ($request) use ($delivery) {
             $expected = 'sha256='.hash_hmac('sha256', $request->body(), 'shhh-this-is-the-secret');
 
-            return $request->hasHeader('X-OpenMES-Signature', $expected)
-                && $request->hasHeader('X-OpenMES-Event', $delivery->event_type)
-                && $request->hasHeader('X-OpenMES-Delivery', (string) $delivery->id);
+            return $request->hasHeader('X-AEG-Signature', $expected)
+                && $request->hasHeader('X-AEG-Event', $delivery->event_type)
+                && $request->hasHeader('X-AEG-Delivery', (string) $delivery->id);
         });
 
         $delivery->refresh();

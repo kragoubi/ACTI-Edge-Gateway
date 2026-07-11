@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Select Modules - Install OpenMES</title>
+    <title>Select Modules - Install ACTI Edge Gateway (AEG)</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-2xl">
         <div class="text-center mb-8">
-            <img src="/logo_open_mes.png" alt="OpenMES" class="h-16 md:h-20 mx-auto mb-2">
+            <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" class="h-16 md:h-20 mx-auto mb-2">
             <h1 class="text-2xl font-bold text-gray-800">Installation Wizard</h1>
             <p class="text-gray-600 mt-2">Step 3 of 4: Select Modules</p>
         </div>

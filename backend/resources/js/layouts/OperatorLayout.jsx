@@ -24,7 +24,7 @@ export default function OperatorLayout({ children }) {
             <header className="shrink-0 bg-om-card border-b border-om-line">
                 <div className="flex items-center gap-4 px-4 h-16">
                     <Link href="/operator/select-line" className="flex items-center shrink-0">
-                        <img src="/logo_open_mes.png" alt="OpenMES" className="h-8 w-auto" />
+                        <img src="/logo_open_mes.png" alt="ACTI Edge Gateway (AEG)" className="h-8 w-auto" />
                     </Link>
 
                     {line && (

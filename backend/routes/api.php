@@ -628,4 +628,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Packaging routes removed — module retired via
     // 2026_05_23_234500_remove_packaging_from_modules_enabled migration.
+
+    // ── ACTILOCK Bridge API (called by Python interlock_bridge.py) ──
+    Route::get('/actilock/health', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'health']);
+    Route::post('/actilock/events', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'storeEvent']);
+    Route::post('/actilock/status', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'updateStatus']);
+    Route::post('/actilock/increment', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'increment']);
+    Route::get('/actilock/config/{id}', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'getConfig']);
+    Route::post('/actilock/{id}/test', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'testConnection']);
 });

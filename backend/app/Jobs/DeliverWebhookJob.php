@@ -69,9 +69,9 @@ class DeliverWebhookJob implements ShouldQueue
             is_array($webhook->headers) ? $webhook->headers : [],
             [
                 'Content-Type' => 'application/json',
-                'X-OpenMES-Event' => $delivery->event_type,
-                'X-OpenMES-Delivery' => (string) $delivery->id,
-                'X-OpenMES-Signature' => 'sha256='.$signature,
+                'X-AEG-Event' => $delivery->event_type,
+                'X-AEG-Delivery' => (string) $delivery->id,
+                'X-AEG-Signature' => 'sha256='.$signature,
             ],
         );
 
