@@ -99,6 +99,7 @@ class SoftDeleteRegistry
         'mqtt_connections' => Models\MqttConnection::class,
         'opcua_connections' => Models\OpcuaConnection::class,
         'actilock_connections' => Models\ActilockConnection::class,
+        'workstation_actilock_configs' => Models\WorkstationActilockConfig::class,
         'machine_topics' => Models\MachineTopic::class,
         'topic_mappings' => Models\TopicMapping::class,
         'machine_tags' => Models\MachineTag::class,

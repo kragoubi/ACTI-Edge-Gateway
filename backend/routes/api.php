@@ -635,5 +635,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/actilock/status', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'updateStatus']);
     Route::post('/actilock/increment', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'increment']);
     Route::get('/actilock/config/{id}', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'getConfig']);
+    Route::get('/actilock/{connectionId}/workstation-config/{plcIp}', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'workstationConfig']);
     Route::post('/actilock/{id}/test', [\App\Http\Controllers\Api\V1\ActilockBridgeController::class, 'testConnection']);
 });

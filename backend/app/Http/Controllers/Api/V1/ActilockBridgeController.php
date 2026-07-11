@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\ActilockConnection;
 use App\Models\ActilockInterlockLog;
+use App\Models\WorkstationActilockConfig;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -212,5 +213,46 @@ class ActilockBridgeController extends Controller
                 'message' => "Connection failed: {$e->getMessage()}",
             ], 422);
         }
+    }
+
+    /**
+     * Get per-workstation ACTILOCK config by PLC IP address.
+     *
+     * Called by the Python bridge to resolve resource/operation/user
+     * for a specific PLC before dispatching to lib_actilock.so.
+     *
+     * Falls back to global defaults from actilock_connections if no
+     * per-workstation config is found.
+     */
+    public function workstationConfig(Request $request, int $connectionId, string $plcIp): JsonResponse
+    {
+        $connection = ActilockConnection::findOrFail($connectionId);
+
+        $wsConfig = WorkstationActilockConfig::findByPlcIp($connectionId, $plcIp);
+
+        if ($wsConfig) {
+            return response()->json([
+                'found' => true,
+                'plc_ip' => $plcIp,
+                'workstation_id' => $wsConfig->workstation_id,
+                'resource' => $wsConfig->resource,
+                'operation' => $wsConfig->operation,
+                'user' => $wsConfig->user,
+                'site' => $wsConfig->site ?: $connection->site,
+                'system' => $wsConfig->system ?: $connection->system,
+                'sfc_prefix' => $wsConfig->sfc_prefix,
+            ]);
+        }
+
+        return response()->json([
+            'found' => false,
+            'plc_ip' => $plcIp,
+            'resource' => $connection->ressource,
+            'operation' => $connection->operation,
+            'user' => $connection->user,
+            'site' => $connection->site,
+            'system' => $connection->system,
+            'sfc_prefix' => '',
+        ]);
     }
 }

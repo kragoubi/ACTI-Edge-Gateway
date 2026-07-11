@@ -74,6 +74,11 @@ class ActilockConnection extends Model
         return $this->hasMany(ActilockInterlockLog::class);
     }
 
+    public function workstationConfigs(): HasMany
+    {
+        return $this->hasMany(WorkstationActilockConfig::class);
+    }
+
     // -- Status helpers --
 
     public function isConnected(): bool

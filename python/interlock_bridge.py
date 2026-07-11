@@ -715,6 +715,9 @@ class InterlockTcpServer:
         self._active_connections: dict[int, socket.socket] = {}
         self._conn_lock = threading.Lock()
         self._connection_counter = 0
+        # Cache for per-workstation configs: {plc_ip: (config_dict, timestamp)}
+        self._ws_config_cache: dict[str, tuple[dict, float]] = {}
+        self._ws_cache_ttl = 60  # seconds
 
     def start(self):
         """Initialize the server and start listening."""
@@ -855,7 +858,7 @@ class InterlockTcpServer:
 
         # Dispatch to ACTILOCK
         try:
-            result = self._dispatch_by_code(code, fields)
+            result = self._dispatch_by_code(code, fields, plc_ip)
         except Exception as e:
             logger.error("Dispatch failed for %s from %s:%d: %s",
                         code_name, plc_ip, plc_port, e, exc_info=True)
@@ -886,36 +889,45 @@ class InterlockTcpServer:
 
         return response_frame
 
-    def _dispatch_by_code(self, code: int, fields: dict) -> tuple:
+    def _dispatch_by_code(self, code: int, fields: dict, plc_ip: str = "") -> tuple:
         """Dispatch a frame to the appropriate ACTILOCK function."""
         config = self.config
 
+        # Resolve per-workstation config from Laravel API
+        ws = self._resolve_workstation_config(plc_ip)
+
+        # Priority: PLC payload > per-workstation config > global defaults
+        site = fields.get("SITE") or ws.get("site") or config.default_site
+        resource = fields.get("RESOURCE") or ws.get("resource") or config.default_ressource
+        operation = fields.get("OPERATION") or ws.get("operation") or config.default_operation
+        user = fields.get("USER") or ws.get("user") or config.default_user
+
         if code == CODE_START:
             return self.client.start(
-                site=fields.get("SITE", config.default_site),
+                site=site,
                 sfc=fields.get("SFC", ""),
-                resource=fields.get("RESOURCE", config.default_ressource),
-                operation=fields.get("OPERATION", config.default_operation),
-                user=fields.get("USER", config.default_user),
+                resource=resource,
+                operation=operation,
+                user=user,
                 manorder=fields.get("MANORDER", ""),
             )
 
         elif code == CODE_COMPLETE:
             return self.client.complete(
-                site=fields.get("SITE", config.default_site),
+                site=site,
                 sfc=fields.get("SFC", ""),
-                resource=fields.get("RESOURCE", config.default_ressource),
-                operation=fields.get("OPERATION", config.default_operation),
-                user=fields.get("USER", config.default_user),
+                resource=resource,
+                operation=operation,
+                user=user,
             )
 
         elif code == CODE_NCLOGCOMPLETE:
             return self.client.nc_log_complete(
-                site=fields.get("SITE", config.default_site),
+                site=site,
                 sfc=fields.get("SFC", ""),
-                resource=fields.get("RESOURCE", config.default_ressource),
-                operation=fields.get("OPERATION", config.default_operation),
-                user=fields.get("USER", config.default_user),
+                resource=resource,
+                operation=operation,
+                user=user,
                 nccode=fields.get("NCCODE", ""),
                 location=fields.get("LOCATION", ""),
                 nbdefault=fields.get("NBDEFAULT", ""),
@@ -931,6 +943,51 @@ class InterlockTcpServer:
 
         else:
             raise ValueError(f"Unknown frame code: 0x{code:02X}")
+
+    def _resolve_workstation_config(self, plc_ip: str) -> dict:
+        """
+        Resolve per-workstation ACTILOCK config from Laravel API.
+
+        Queries GET /api/v1/actilock/{connectionId}/workstation-config/{plcIp}
+        to get resource/operation/user overrides for this specific PLC.
+
+        Uses a 60-second cache to avoid querying Laravel on every frame.
+
+        Returns empty dict if not found (caller falls back to global defaults).
+        """
+        if not plc_ip or not self.config.connection_id:
+            return {}
+
+        # Check cache first
+        now = time.monotonic()
+        if plc_ip in self._ws_config_cache:
+            cached, ts = self._ws_config_cache[plc_ip]
+            if now - ts < self._ws_cache_ttl:
+                return cached
+
+        try:
+            url = (
+                f"{self.config.laravel_url.rstrip('/')}/api/v1/actilock/"
+                f"{self.config.connection_id}/workstation-config/{plc_ip}"
+            )
+            headers = {"Accept": "application/json"}
+            if self.config.api_token:
+                headers["Authorization"] = f"Bearer {self.config.api_token}"
+
+            req = urllib.request.Request(url, headers=headers, method="GET")
+            with urllib.request.urlopen(req, timeout=3) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                # Cache the result (even if not found, to avoid re-querying)
+                self._ws_config_cache[plc_ip] = (data, now)
+                if data.get("found"):
+                    self.logger.info(
+                        "Resolved workstation config for PLC %s: resource=%s op=%s user=%s",
+                        plc_ip, data.get("resource"), data.get("operation"), data.get("user"),
+                    )
+                return data
+        except Exception as e:
+            self.logger.debug("Could not resolve workstation config for PLC %s: %s", plc_ip, e)
+            return {}
 
     def _connect_to_engine(self):
         """Connect to the ACTILOCK engine."""
