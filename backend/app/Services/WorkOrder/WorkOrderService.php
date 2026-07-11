@@ -1,0 +1,224 @@
+<?php
+
+namespace App\Services\WorkOrder;
+
+use App\Models\Batch;
+use App\Models\BatchStep;
+use App\Models\ProcessTemplate;
+use App\Models\WorkOrder;
+use Illuminate\Support\Facades\DB;
+
+class WorkOrderService
+{
+    /**
+     * Create a new work order with process snapshot.
+     *
+     * @throws \Exception
+     */
+    public function createWorkOrder(array $data): WorkOrder
+    {
+        return DB::transaction(function () use ($data) {
+            // Get the active process template for this product type (optional)
+            $processTemplate = isset($data['product_type_id'])
+                ? ProcessTemplate::where('product_type_id', $data['product_type_id'])
+                    ->where('is_active', true)
+                    ->orderBy('version', 'desc')
+                    ->first()
+                : null;
+
+            // Generate process snapshot (immutable copy) — null if no template
+            $processSnapshot = $processTemplate?->toSnapshot();
+
+            // Create work order
+            $workOrder = WorkOrder::create([
+                'order_no' => $data['order_no'],
+                'customer_order_no' => $data['customer_order_no'] ?? null,
+                'line_id' => $data['line_id'] ?? null,
+                'product_type_id' => $data['product_type_id'] ?? null,
+                'process_snapshot' => $processSnapshot,
+                'planned_qty' => $data['planned_qty'],
+                'produced_qty' => 0,
+                'status' => WorkOrder::STATUS_PENDING,
+                'priority' => $data['priority'] ?? 0,
+                'due_date' => $data['due_date'] ?? null,
+                'description' => $data['description'] ?? null,
+                'extra_data' => $data['extra_data'] ?? null,
+                'custom_fields' => $data['custom_fields'] ?? null,
+            ]);
+
+            return $workOrder;
+        });
+    }
+
+    /**
+     * Update an existing work order.
+     */
+    public function updateWorkOrder(WorkOrder $workOrder, array $data): WorkOrder
+    {
+        // Don't allow updates to completed work orders
+        if ($workOrder->status === WorkOrder::STATUS_DONE) {
+            throw new \Exception('Cannot update completed work order');
+        }
+
+        $workOrder->update([
+            'customer_order_no' => array_key_exists('customer_order_no', $data)
+                ? $data['customer_order_no']
+                : $workOrder->customer_order_no,
+            'planned_qty' => $data['planned_qty'] ?? $workOrder->planned_qty,
+            'priority' => $data['priority'] ?? $workOrder->priority,
+            'due_date' => $data['due_date'] ?? $workOrder->due_date,
+            'description' => $data['description'] ?? $workOrder->description,
+        ]);
+
+        return $workOrder->fresh();
+    }
+
+    /**
+     * Create a new batch for a work order.
+     */
+    public function createBatch(WorkOrder $workOrder, float $targetQty, ?int $workstationId = null, ?string $lotNumber = null): Batch
+    {
+        return DB::transaction(function () use ($workOrder, $targetQty, $workstationId, $lotNumber) {
+            // Calculate next batch number
+            $lastBatch = $workOrder->batches()->reorder('batch_number', 'desc')->first();
+            $batchNumber = $lastBatch ? $lastBatch->batch_number + 1 : 1;
+
+            // Create batch
+            $batch = Batch::create([
+                'work_order_id' => $workOrder->id,
+                'batch_number' => $batchNumber,
+                'target_qty' => $targetQty,
+                'produced_qty' => 0,
+                'status' => Batch::STATUS_PENDING,
+                'workstation_id' => $workstationId,
+                'lot_number' => $lotNumber,
+                'lot_assigned_at' => $lotNumber ? Batch::LOT_ON_START : null,
+            ]);
+
+            // Create batch steps from process snapshot (skipped if no snapshot)
+            if (! empty($workOrder->process_snapshot)) {
+                $this->createBatchStepsFromSnapshot($batch, $workOrder->process_snapshot);
+            }
+
+            return $batch;
+        });
+    }
+
+    /**
+     * Create batch steps from work order process snapshot.
+     */
+    protected function createBatchStepsFromSnapshot(Batch $batch, array $processSnapshot): void
+    {
+        $steps = $processSnapshot['steps'] ?? [];
+
+        // Resolve the pre-selected step per variant group: the one flagged as
+        // default, else the lowest step_number in the group. Siblings start
+        // SKIPPED so the operator sees only the chosen path (and can switch).
+        $chosen = [];
+        $explicit = [];
+        foreach ($steps as $s) {
+            $group = $s['variant_group'] ?? null;
+            if ($group === null) {
+                continue;
+            }
+            $num = $s['step_number'];
+            if (! empty($s['is_default_variant'])) {
+                if (empty($explicit[$group])) {
+                    $chosen[$group] = $num;
+                    $explicit[$group] = true;
+                }
+            } elseif (empty($explicit[$group])) {
+                $chosen[$group] = isset($chosen[$group]) ? min($chosen[$group], $num) : $num;
+            }
+        }
+
+        foreach ($steps as $stepData) {
+            $group = $stepData['variant_group'] ?? null;
+            $status = BatchStep::STATUS_PENDING;
+            if ($group !== null && isset($chosen[$group]) && $stepData['step_number'] !== $chosen[$group]) {
+                $status = BatchStep::STATUS_SKIPPED;
+            }
+
+            BatchStep::create([
+                'batch_id' => $batch->id,
+                'step_number' => $stepData['step_number'],
+                'name' => $stepData['name'],
+                'instruction' => $stepData['instruction'] ?? null,
+                'workstation_id' => $stepData['workstation_id'] ?? null,
+                'status' => $status,
+                'is_optional' => $stepData['is_optional'] ?? false,
+                'variant_group' => $group,
+            ]);
+        }
+
+        // Mark the first eligible step(s) READY ("next in line") so the operator
+        // can start straight away; the rest stay PENDING until their turn.
+        $batch->promoteReadySteps();
+    }
+
+    /**
+     * Update work order status based on batches and issues.
+     */
+    public function updateWorkOrderStatus(WorkOrder $workOrder): void
+    {
+        // Check if blocked by issues
+        if ($workOrder->isBlocked()) {
+            $workOrder->update(['status' => WorkOrder::STATUS_BLOCKED]);
+
+            return;
+        }
+
+        // Check if complete
+        if ($workOrder->isComplete()) {
+            $workOrder->update([
+                'status' => WorkOrder::STATUS_DONE,
+                'completed_at' => now(),
+            ]);
+
+            return;
+        }
+
+        // Check if any batch is in progress
+        $hasInProgressBatch = $workOrder->batches()
+            ->where('status', Batch::STATUS_IN_PROGRESS)
+            ->exists();
+
+        if ($hasInProgressBatch) {
+            $workOrder->update(['status' => WorkOrder::STATUS_IN_PROGRESS]);
+
+            return;
+        }
+
+        // Otherwise keep as pending
+        if ($workOrder->status !== WorkOrder::STATUS_PENDING &&
+            $workOrder->status !== WorkOrder::STATUS_DONE) {
+            $workOrder->update(['status' => WorkOrder::STATUS_PENDING]);
+        }
+    }
+
+    /**
+     * Get work orders for a specific user's assigned lines.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getWorkOrdersForUser($user, array $filters = [])
+    {
+        $query = WorkOrder::forUser($user)
+            ->with(['line', 'productType', 'batches.steps']);
+
+        // Apply filters
+        if (isset($filters['status'])) {
+            $query->status($filters['status']);
+        }
+
+        if (isset($filters['line_id'])) {
+            $query->forLine($filters['line_id']);
+        }
+
+        // Default ordering
+        $query->byPriority();
+
+        return $query->get();
+    }
+}
