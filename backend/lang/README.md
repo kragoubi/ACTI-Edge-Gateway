@@ -1,6 +1,6 @@
 # Translations
 
-OpenMES uses Laravel JSON translations. Each language is a single JSON file.
+AEG uses Laravel JSON translations. Each language is a single JSON file.
 
 ## Adding a new language
 
