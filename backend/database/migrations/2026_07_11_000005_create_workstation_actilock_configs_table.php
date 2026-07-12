@@ -20,7 +20,7 @@ return new class extends Migration
     {
         Schema::create('workstation_actilock_configs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('workstation_id')->constrained('workstations')->cascadeOnDelete();
+            $table->foreignId('workstation_id')->nullable()->constrained('workstations')->nullOnDelete();
             $table->foreignId('actilock_connection_id')->constrained('actilock_connections')->cascadeOnDelete();
 
             // PLC identification (used to match incoming TCP connections)
@@ -39,6 +39,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
 
             $table->timestamps();
+            $table->softDeletes();
+            $table->foreignId('deleted_by_id')->nullable()->constrained('users')->nullOnDelete();
 
             // A PLC IP is unique per ACTILOCK connection
             $table->unique(['actilock_connection_id', 'plc_ip']);

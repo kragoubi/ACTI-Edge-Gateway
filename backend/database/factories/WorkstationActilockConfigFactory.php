@@ -14,7 +14,7 @@ class WorkstationActilockConfigFactory extends Factory
     public function definition(): array
     {
         return [
-            'workstation_id' => Workstation::factory(),
+            'workstation_id' => null,
             'actilock_connection_id' => ActilockConnection::factory(),
             'plc_ip' => $this->faker->ipv4(),
             'resource' => 'R_' . strtoupper($this->faker->lexify('???_#####')),

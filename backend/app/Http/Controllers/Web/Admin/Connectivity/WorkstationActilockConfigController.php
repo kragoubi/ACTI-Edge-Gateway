@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MachineConnection;
 use App\Models\WorkstationActilockConfig;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class WorkstationActilockConfigController extends Controller
@@ -141,10 +142,11 @@ class WorkstationActilockConfigController extends Controller
 
     private function validateData(Request $request, int $actilockConnectionId, ?int $exceptId = null): array
     {
-        $uniquePlcRule = "unique:workstation_actilock_configs,plc_ip,{$actilockConnectionId},actilock_connection_id";
+        $uniquePlcRule = Rule::unique('workstation_actilock_configs', 'plc_ip')
+            ->where('actilock_connection_id', $actilockConnectionId);
 
         if ($exceptId) {
-            $uniquePlcRule .= ",{$exceptId},id";
+            $uniquePlcRule->ignore($exceptId);
         }
 
         return $request->validate([
