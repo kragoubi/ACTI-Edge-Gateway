@@ -21,11 +21,29 @@ class ActilockInterlockLog extends Model
 
     const FRAME_PRODUCTSTATUS = 0x13;
 
+    const FRAME_INIT = 0x14;
+
+    const FRAME_INQUEUE = 0x15;
+
+    const FRAME_QUICKCOMPLETE = 0x16;
+
+    const FRAME_ISEXPECTEDAT = 0x17;
+
+    const FRAME_ISITLOCKABLE = 0x18;
+
+    const FRAME_NEXTOP = 0x19;
+
     const FRAME_LABELS = [
         self::FRAME_START => 'START',
         self::FRAME_COMPLETE => 'COMPLETE',
         self::FRAME_NCLOGCOMPLETE => 'NCLOGCOMPLETE',
         self::FRAME_PRODUCTSTATUS => 'PRODUCTSTATUS',
+        self::FRAME_INIT => 'INIT',
+        self::FRAME_INQUEUE => 'INQUEUE',
+        self::FRAME_QUICKCOMPLETE => 'QUICKCOMPLETE',
+        self::FRAME_ISEXPECTEDAT => 'ISEXPECTEDAT',
+        self::FRAME_ISITLOCKABLE => 'ISITLOCKABLE',
+        self::FRAME_NEXTOP => 'NEXTOP',
     ];
 
     protected $fillable = [

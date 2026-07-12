@@ -123,7 +123,15 @@ CODE_START = 0x10
 CODE_COMPLETE = 0x11
 CODE_NCLOGCOMPLETE = 0x12
 CODE_PRODUCTSTATUS = 0x13
-VALID_CODES = {CODE_START, CODE_COMPLETE, CODE_NCLOGCOMPLETE, CODE_PRODUCTSTATUS}
+CODE_INIT = 0x14
+CODE_INQUEUE = 0x15
+CODE_QUICKCOMPLETE = 0x16
+CODE_ISEXPECTEDAT = 0x17
+CODE_ISITLOCKABLE = 0x18
+CODE_NEXTOP = 0x19
+VALID_CODES = {CODE_START, CODE_COMPLETE, CODE_NCLOGCOMPLETE, CODE_PRODUCTSTATUS,
+               CODE_INIT, CODE_INQUEUE, CODE_QUICKCOMPLETE, CODE_ISEXPECTEDAT,
+               CODE_ISITLOCKABLE, CODE_NEXTOP}
 MAX_FRAME_SIZE = 1024
 DELIMITER = "`"
 
@@ -132,6 +140,12 @@ CODE_NAMES = {
     CODE_COMPLETE: "Complete",
     CODE_NCLOGCOMPLETE: "NcLogComplete",
     CODE_PRODUCTSTATUS: "ProductStatus",
+    CODE_INIT: "Init",
+    CODE_INQUEUE: "InQueue",
+    CODE_QUICKCOMPLETE: "QuickComplete",
+    CODE_ISEXPECTEDAT: "IsExpectedAt",
+    CODE_ISITLOCKABLE: "IsItLockable",
+    CODE_NEXTOP: "NextOp",
 }
 
 
@@ -288,6 +302,15 @@ class ActilockClient:
             ]
             self._fn_connect.restype = ctypes.c_bool
 
+            # ACTILOCK_Init(site, sfc, resource, operation, user, manorder, &response) -> bool
+            self._fn_init = self.lib.ACTILOCK_Init
+            self._fn_init.argtypes = [
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.POINTER(ctypes.c_char_p)
+            ]
+            self._fn_init.restype = ctypes.c_bool
+
             # ACTILOCK_Start(site, sfc, resource, operation, user, manorder, &response) -> bool
             self._fn_start = self.lib.ACTILOCK_Start
             self._fn_start.argtypes = [
@@ -371,6 +394,48 @@ class ActilockClient:
             self._fn_getlastresponse.argtypes = []
             self._fn_getlastresponse.restype = ctypes.c_char_p
 
+            # ACTILOCK_InQueue(site, sfc, resource, operation, user, nccode, &response) -> bool
+            self._fn_inqueue = self.lib.ACTILOCK_InQueue
+            self._fn_inqueue.argtypes = [
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.POINTER(ctypes.c_char_p)
+            ]
+            self._fn_inqueue.restype = ctypes.c_bool
+
+            # ACTILOCK_QuickComplete(site, sfc, resource, operation, user, &response) -> bool
+            self._fn_quickcomplete = self.lib.ACTILOCK_QuickComplete
+            self._fn_quickcomplete.argtypes = [
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.POINTER(ctypes.c_char_p)
+            ]
+            self._fn_quickcomplete.restype = ctypes.c_bool
+
+            # ACTILOCK_IsExpectedAt(sfc, operation, &response) -> bool
+            self._fn_isexpectedat = self.lib.ACTILOCK_IsExpectedAt
+            self._fn_isexpectedat.argtypes = [
+                ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.POINTER(ctypes.c_char_p)
+            ]
+            self._fn_isexpectedat.restype = ctypes.c_bool
+
+            # ACTILOCK_IsItLockable(sfc, &response) -> bool
+            self._fn_isitlockable = self.lib.ACTILOCK_IsItLockable
+            self._fn_isitlockable.argtypes = [
+                ctypes.c_char_p,
+                ctypes.POINTER(ctypes.c_char_p)
+            ]
+            self._fn_isitlockable.restype = ctypes.c_bool
+
+            # ACTILOCK_NextOp(router, revision, operation, &response) -> bool
+            self._fn_nextop = self.lib.ACTILOCK_NextOp
+            self._fn_nextop.argtypes = [
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.POINTER(ctypes.c_char_p)
+            ]
+            self._fn_nextop.restype = ctypes.c_bool
+
         except AttributeError as e:
             raise RuntimeError(f"Missing symbol in lib_actilock.so: {e}") from e
 
@@ -408,6 +473,10 @@ class ActilockClient:
               user: str, manorder: str = "") -> tuple:
         return self._call(self._fn_start, [site, sfc, resource, operation, user, manorder])
 
+    def init(self, site: str, sfc: str, resource: str, operation: str,
+             user: str, manorder: str = "") -> tuple:
+        return self._call(self._fn_init, [site, sfc, resource, operation, user, manorder])
+
     def complete(self, site: str, sfc: str, resource: str, operation: str,
                  user: str) -> tuple:
         return self._call(self._fn_complete, [site, sfc, resource, operation, user])
@@ -422,6 +491,23 @@ class ActilockClient:
 
     def product_status(self, parameter: str, sfc: str) -> tuple:
         return self._call(self._fn_productstatus, [parameter, sfc])
+
+    def in_queue(self, site: str, sfc: str, resource: str, operation: str,
+                 user: str, nccode: str = "") -> tuple:
+        return self._call(self._fn_inqueue, [site, sfc, resource, operation, user, nccode])
+
+    def quick_complete(self, site: str, sfc: str, resource: str, operation: str,
+                       user: str) -> tuple:
+        return self._call(self._fn_quickcomplete, [site, sfc, resource, operation, user])
+
+    def is_expected_at(self, sfc: str, operation: str) -> tuple:
+        return self._call(self._fn_isexpectedat, [sfc, operation])
+
+    def is_it_lockable(self, sfc: str) -> tuple:
+        return self._call(self._fn_isitlockable, [sfc])
+
+    def next_op(self, router: str, revision: str, operation: str) -> tuple:
+        return self._call(self._fn_nextop, [router, revision, operation])
 
     def net_ping(self, host: str) -> tuple:
         with self._lock:
@@ -574,6 +660,10 @@ class InterlockProcessClient:
         return self._call("start", site=site, sfc=sfc, resource=resource,
                          operation=operation, user=user, manorder=manorder)
 
+    def init(self, site, sfc, resource, operation, user, manorder=""):
+        return self._call("init", site=site, sfc=sfc, resource=resource,
+                         operation=operation, user=user, manorder=manorder)
+
     def complete(self, site, sfc, resource, operation, user):
         return self._call("complete", site=site, sfc=sfc, resource=resource,
                          operation=operation, user=user)
@@ -587,6 +677,23 @@ class InterlockProcessClient:
 
     def product_status(self, parameter, sfc):
         return self._call("product_status", parameter=parameter, sfc=sfc)
+
+    def in_queue(self, site, sfc, resource, operation, user, nccode=""):
+        return self._call("in_queue", site=site, sfc=sfc, resource=resource,
+                         operation=operation, user=user, nccode=nccode)
+
+    def quick_complete(self, site, sfc, resource, operation, user):
+        return self._call("quick_complete", site=site, sfc=sfc, resource=resource,
+                         operation=operation, user=user)
+
+    def is_expected_at(self, sfc, operation):
+        return self._call("is_expected_at", sfc=sfc, operation=operation)
+
+    def is_it_lockable(self, sfc):
+        return self._call("is_it_lockable", sfc=sfc)
+
+    def next_op(self, router, revision, operation):
+        return self._call("next_op", router=router, revision=revision, operation=operation)
 
     def net_ping(self, host):
         return self._call("net_ping", host=host)
@@ -941,6 +1048,53 @@ class InterlockTcpServer:
                 sfc=fields.get("SFC", ""),
             )
 
+        elif code == CODE_INIT:
+            return self.client.init(
+                site=site,
+                sfc=fields.get("SFC", ""),
+                resource=resource,
+                operation=operation,
+                user=user,
+                manorder=fields.get("MANORDER", ""),
+            )
+
+        elif code == CODE_INQUEUE:
+            return self.client.in_queue(
+                site=site,
+                sfc=fields.get("SFC", ""),
+                resource=resource,
+                operation=operation,
+                user=user,
+                nccode=fields.get("NCCODE", ""),
+            )
+
+        elif code == CODE_QUICKCOMPLETE:
+            return self.client.quick_complete(
+                site=site,
+                sfc=fields.get("SFC", ""),
+                resource=resource,
+                operation=operation,
+                user=user,
+            )
+
+        elif code == CODE_ISEXPECTEDAT:
+            return self.client.is_expected_at(
+                sfc=fields.get("SFC", ""),
+                operation=operation,
+            )
+
+        elif code == CODE_ISITLOCKABLE:
+            return self.client.is_it_lockable(
+                sfc=fields.get("SFC", ""),
+            )
+
+        elif code == CODE_NEXTOP:
+            return self.client.next_op(
+                router=fields.get("ROUTER", ""),
+                revision=fields.get("REVISION", ""),
+                operation=operation,
+            )
+
         else:
             raise ValueError(f"Unknown frame code: 0x{code:02X}")
 
@@ -1089,6 +1243,8 @@ class InterlockTcpServer:
             CODE_START: "start_count",
             CODE_COMPLETE: "complete_count",
             CODE_NCLOGCOMPLETE: "nclog_count",
+            CODE_INIT: "start_count",
+            CODE_QUICKCOMPLETE: "complete_count",
         }
         field = field_map.get(code)
         if field:

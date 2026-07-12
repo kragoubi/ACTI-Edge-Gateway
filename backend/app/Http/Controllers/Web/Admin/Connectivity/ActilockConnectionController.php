@@ -184,6 +184,18 @@ class ActilockConnectionController extends Controller
             ->with('success', __('ACTILOCK connection deleted.'));
     }
 
+    public function frameExchange(MachineConnection $machineConnection)
+    {
+        abort_unless($machineConnection->protocol === MachineConnection::PROTOCOL_ACTILOCK, 404);
+
+        return Inertia::render('admin/connectivity/actilock/FrameExchange', [
+            'connection' => [
+                'id' => $machineConnection->id,
+                'name' => $machineConnection->name,
+            ],
+        ]);
+    }
+
     private function validateData(Request $request): array
     {
         return $request->validate([

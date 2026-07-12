@@ -30,6 +30,18 @@ class TcpFrameParser
 
     public const CODE_PRODUCTSTATUS = 0x13;
 
+    const CODE_INIT = 0x14;
+
+    const CODE_INQUEUE = 0x15;
+
+    const CODE_QUICKCOMPLETE = 0x16;
+
+    const CODE_ISEXPECTEDAT = 0x17;
+
+    const CODE_ISITLOCKABLE = 0x18;
+
+    const CODE_NEXTOP = 0x19;
+
     public const MAX_FRAME_SIZE = 1024;
 
     public const MIN_FRAME_SIZE = 4;
@@ -39,6 +51,12 @@ class TcpFrameParser
         self::CODE_COMPLETE,
         self::CODE_NCLOGCOMPLETE,
         self::CODE_PRODUCTSTATUS,
+        self::CODE_INIT,
+        self::CODE_INQUEUE,
+        self::CODE_QUICKCOMPLETE,
+        self::CODE_ISEXPECTEDAT,
+        self::CODE_ISITLOCKABLE,
+        self::CODE_NEXTOP,
     ];
 
     private const DELIMITER = '`';

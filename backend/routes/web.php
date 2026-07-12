@@ -747,6 +747,11 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/{config}', [$c, 'destroy'])->name('destroy');
             });
 
+        // ACTILOCK frame exchange reference
+        Route::get('/connectivity/actilock/{machineConnection}/frames',
+            [\App\Http\Controllers\Web\Admin\Connectivity\ActilockConnectionController::class, 'frameExchange'])
+            ->name('connectivity.actilock.frames');
+
         // Live machine monitor (React/Inertia — ported from the original develop Blade UI)
         Route::get('/machine-monitor', [\App\Http\Controllers\Web\Admin\MachineMonitorController::class, 'index'])->name('machine-monitor.index');
         Route::get('/machine-monitor/check', [\App\Http\Controllers\Web\Admin\MachineMonitorController::class, 'check'])->name('machine-monitor.check');

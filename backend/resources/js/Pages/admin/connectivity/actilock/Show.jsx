@@ -144,6 +144,20 @@ export default function ActilockShow() {
                     </div>
                 </a>
 
+                {/* Frame Exchange link */}
+                <a href={`/admin/connectivity/actilock/${connection.id}/frames`}
+                    className="block bg-om-card rounded-om border border-om-line2 p-5 mb-6 hover:border-om-accent transition-colors">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="text-sm font-semibold text-om-muted uppercase tracking-wider">Frame Exchange — ISA-95 Protocol</h3>
+                            <p className="text-xs text-om-faint mt-1">
+                                Reference complete des trames TCP echangees entre le PLC et l'AEG.
+                            </p>
+                        </div>
+                        <span className="text-om-accent text-sm">View &rarr;</span>
+                    </div>
+                </a>
+
                 {/* Launch command hint */}
                 <div className="bg-om-card rounded-om border border-om-line2 p-5 mb-6">
                     <h3 className="text-sm font-semibold text-om-muted uppercase tracking-wider mb-3">Python Bridge (Recommended)</h3>
