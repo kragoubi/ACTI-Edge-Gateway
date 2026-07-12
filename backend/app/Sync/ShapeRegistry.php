@@ -227,6 +227,39 @@ class ShapeRegistry
             'table' => 'webhook_deliveries',
             'columns' => ['id', 'webhook_id', 'event_type', 'status', 'attempts', 'response_code', 'error', 'delivered_at', 'created_at', 'updated_at'],
         ],
+
+        // ── ACTILOCK Connectivity ──────────────────────────────────────
+        'actilock_connections' => [
+            'table' => 'actilock_connections',
+            'columns' => [
+                'id', 'machine_connection_id', 'document', 'site', 'system',
+                'ressource', 'operation', 'user', 'listen_host', 'listen_port',
+                'max_plc_connections', 'engine_host', 'engine_port', 'lib_path',
+                'ffi_timeout_seconds', 'tcp_read_timeout_seconds',
+                'status', 'status_message', 'last_connected_at',
+                'interlocks_total', 'interlocks_rejected',
+                'start_count', 'complete_count', 'nclog_count',
+                'created_at', 'updated_at',
+            ],
+        ],
+        'actilock_interlock_logs' => [
+            'table' => 'actilock_interlock_logs',
+            'columns' => [
+                'id', 'actilock_connection_id', 'machine_connection_id',
+                'frame_code', 'frame_label', 'plc_ip', 'plc_port',
+                'sfc', 'result', 'operation', 'user', 'is_accepted',
+                'actilock_response', 'actilock_error', 'duration_ms',
+                'ffi_success', 'event_timestamp', 'correlation_id',
+            ],
+        ],
+        'workstation_actilock_configs' => [
+            'table' => 'workstation_actilock_configs',
+            'columns' => [
+                'id', 'actilock_connection_id', 'workstation_id', 'plc_ip',
+                'resource', 'operation', 'user', 'sfc_prefix', 'site', 'system',
+                'is_active', 'created_at', 'updated_at',
+            ],
+        ],
     ];
 
     public function find(string $name): ?Shape

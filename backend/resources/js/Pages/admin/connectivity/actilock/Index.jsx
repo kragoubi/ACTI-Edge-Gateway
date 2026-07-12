@@ -1,13 +1,31 @@
 import { Head } from '@inertiajs/react';
+import { useMemo } from 'react';
+import { useSyncedShape } from '../../../../lib/useSyncedShape';
 import AppLayout from '../../../../layouts/AppLayout';
 
-export default function ActilockIndex({ connections }) {
+export default function ActilockIndex({ connections: serverConnections }) {
+    const { data: liveConnections = [] } = useSyncedShape('actilock_connections');
+
+    // Merge server data with live data — live wins when available
+    const connections = useMemo(() => {
+        if (liveConnections.length > 0) return liveConnections;
+        return serverConnections;
+    }, [liveConnections, serverConnections]);
+
     return (
         <>
             <Head title="ACTILOCK Connections" />
             <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl font-bold text-om-ink">ACTILOCK Connections</h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-2xl font-bold text-om-ink">ACTILOCK Connections</h1>
+                        {liveConnections.length > 0 && (
+                            <span className="inline-flex items-center gap-1.5 text-xs text-green-600 font-medium">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                Live
+                            </span>
+                        )}
+                    </div>
                     <a href="/admin/connectivity/actilock/create"
                         className="px-4 py-2 bg-om-accent text-white rounded-om text-sm font-medium">
                         + New Connection
@@ -47,14 +65,14 @@ export default function ActilockIndex({ connections }) {
                                         </td>
                                         <td className="px-4 py-3">
                                             <span className={`inline-flex items-center gap-1.5 text-xs font-medium
-                                                ${c.status_color === 'green' ? 'text-green-600' :
-                                                  c.status_color === 'red' ? 'text-red-600' :
-                                                  c.status_color === 'yellow' ? 'text-yellow-600' :
+                                                ${c.status === 'connected' ? 'text-green-600' :
+                                                  c.status === 'error' ? 'text-red-600' :
+                                                  c.status === 'connecting' ? 'text-yellow-600' :
                                                   'text-om-faint'}`}>
                                                 <span className={`w-1.5 h-1.5 rounded-full
-                                                    ${c.status_color === 'green' ? 'bg-green-500' :
-                                                      c.status_color === 'red' ? 'bg-red-500' :
-                                                      c.status_color === 'yellow' ? 'bg-yellow-500' :
+                                                    ${c.status === 'connected' ? 'bg-green-500' :
+                                                      c.status === 'error' ? 'bg-red-500' :
+                                                      c.status === 'connecting' ? 'bg-yellow-500 animate-pulse' :
                                                       'bg-om-faint'}`} />
                                                 {c.status}
                                             </span>

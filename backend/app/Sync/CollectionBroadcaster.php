@@ -78,6 +78,11 @@ class CollectionBroadcaster
             'maintenance_events' => [Models\MaintenanceEvent::class, null],
             'maintenance_schedules' => [Models\MaintenanceSchedule::class, null],
             'custom_field_definitions' => [Models\CustomFieldDefinition::class, null],
+
+            // ── ACTILOCK Connectivity ─────────────────────────────────
+            'actilock_connections' => [Models\ActilockConnection::class, null],
+            'actilock_interlock_logs' => [Models\ActilockInterlockLog::class, null],
+            'workstation_actilock_configs' => [Models\WorkstationActilockConfig::class, null],
         ];
     }
 
